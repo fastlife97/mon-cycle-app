@@ -23,16 +23,16 @@
     },
     "extra": {
       "eas": {
-        "projectId": "552f0665-e30d-4f11-9ea9-97bc22a22809"
+        "projectId": "51c1ac3c-4e26-45b7-b100-d0e344e7796c"
       }
     },
     "updates": {
-      "url": "https://u.expo.dev/552f0665-e30d-4f11-9ea9-97bc22a22809"
+      "url": "https://u.expo.dev/51c1ac3c-4e26-45b7-b100-d0e344e7796c"
     },
     "runtimeVersion": {
       "policy": "appVersion"
     },
-    "owner": "arcadalabs",
+    "owner": "fastlife97",
     "platforms": [
       "ios",
       "android",
