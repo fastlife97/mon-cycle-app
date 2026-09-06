@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { StatusBar } from 'expo-status-bar';
 import { View, StyleSheet, useColorScheme, SafeAreaView, Platform } from 'react-native';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { useFonts } from 'expo-font';
@@ -100,150 +101,156 @@ export default function App() {
   // 1. If Stealth Mode Disguise is active, show the fake Notes app
   if (isStealthActive) {
     return (
-      <SafeAreaView style={[styles.safeArea, { backgroundColor: '#F8F9FA' }]}>
-        <StatusBar style="dark" />
-        <StealthDisguiseView onExitStealth={handleExitStealth} />
-      </SafeAreaView>
+      <GestureHandlerRootView style={{ flex: 1 }}>
+        <SafeAreaView style={[styles.safeArea, { backgroundColor: '#F8F9FA' }]}>
+          <StatusBar style="dark" />
+          <StealthDisguiseView onExitStealth={handleExitStealth} />
+        </SafeAreaView>
+      </GestureHandlerRootView>
     );
   }
 
   // 2. If Locked, show Biometric / PIN Lock Screen
   if (isLocked) {
     return (
-      <SafeAreaView style={[styles.safeArea, { backgroundColor: themeColors.background }]}>
-        <StatusBar style={isDark ? 'light' : 'dark'} />
-        <BiometricLockScreen
-          securitySettings={profile.security}
-          onUnlockSuccess={() => setIsLocked(false)}
-          onStealthUnlock={() => {
-            setIsLocked(false);
-            setIsStealthActive(true);
-          }}
-          isDark={isDark}
-        />
-      </SafeAreaView>
+      <GestureHandlerRootView style={{ flex: 1 }}>
+        <SafeAreaView style={[styles.safeArea, { backgroundColor: themeColors.background }]}>
+          <StatusBar style={isDark ? 'light' : 'dark'} />
+          <BiometricLockScreen
+            securitySettings={profile.security}
+            onUnlockSuccess={() => setIsLocked(false)}
+            onStealthUnlock={() => {
+              setIsLocked(false);
+              setIsStealthActive(true);
+            }}
+            isDark={isDark}
+          />
+        </SafeAreaView>
+      </GestureHandlerRootView>
     );
   }
 
   return (
-    <SafeAreaView style={[styles.safeArea, { backgroundColor: themeColors.background }]}>
-      <StatusBar style={isDark ? 'light' : 'dark'} />
-      <NavigationContainer>
-        <Tab.Navigator
-          screenOptions={{
-            headerShown: false,
-            tabBarStyle: {
-              backgroundColor: themeColors.surface,
-              borderTopColor: themeColors.borderLight,
-              borderTopWidth: 1,
-              height: Platform.OS === 'ios' ? 86 : 64,
-              paddingBottom: Platform.OS === 'ios' ? 24 : 8,
-              paddingTop: 8,
-            },
-            tabBarActiveTintColor: themeColors.period,
-            tabBarInactiveTintColor: themeColors.textMuted,
-            tabBarLabelStyle: {
-              fontSize: 11,
-              fontWeight: '700',
-            },
-          }}
-        >
-          <Tab.Screen
-            name="Accueil"
-            options={{
-              tabBarLabel: 'Sanctuaire',
-              tabBarIcon: ({ color, size }) => (
-                <Ionicons name="sparkles-outline" size={size || 22} color={color} />
-              ),
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <SafeAreaView style={[styles.safeArea, { backgroundColor: themeColors.background }]}>
+        <StatusBar style={isDark ? 'light' : 'dark'} />
+        <NavigationContainer>
+          <Tab.Navigator
+            screenOptions={{
+              headerShown: false,
+              tabBarStyle: {
+                backgroundColor: themeColors.surface,
+                borderTopColor: themeColors.borderLight,
+                borderTopWidth: 1,
+                height: Platform.OS === 'ios' ? 86 : 64,
+                paddingBottom: Platform.OS === 'ios' ? 24 : 8,
+                paddingTop: 8,
+              },
+              tabBarActiveTintColor: themeColors.period,
+              tabBarInactiveTintColor: themeColors.textMuted,
+              tabBarLabelStyle: {
+                fontSize: 11,
+                fontWeight: '700',
+              },
             }}
           >
-            {(props) => (
-              <HomeScreen
-                {...props}
-                cycles={cycles}
-                dailyLogs={dailyLogs}
-                profile={profile}
-                onRefreshData={loadAppData}
-                onLockApp={handleLockApp}
-                onEnterStealth={handleEnterStealth}
-                onNavigateToLog={(dateStr) => {
-                  setTargetLogDate(dateStr);
-                  props.navigation.navigate('Journal');
-                }}
-                isDark={isDark}
-              />
-            )}
-          </Tab.Screen>
+            <Tab.Screen
+              name="Accueil"
+              options={{
+                tabBarLabel: 'Sanctuaire',
+                tabBarIcon: ({ color, size }) => (
+                  <Ionicons name="sparkles-outline" size={size || 22} color={color} />
+                ),
+              }}
+            >
+              {(props) => (
+                <HomeScreen
+                  {...props}
+                  cycles={cycles}
+                  dailyLogs={dailyLogs}
+                  profile={profile}
+                  onRefreshData={loadAppData}
+                  onLockApp={handleLockApp}
+                  onEnterStealth={handleEnterStealth}
+                  onNavigateToLog={(dateStr) => {
+                    setTargetLogDate(dateStr);
+                    props.navigation.navigate('Journal');
+                  }}
+                  isDark={isDark}
+                />
+              )}
+            </Tab.Screen>
 
-          <Tab.Screen
-            name="Journal"
-            options={{
-              tabBarLabel: 'Journal',
-              tabBarIcon: ({ color, size }) => (
-                <Ionicons name="journal-outline" size={size || 22} color={color} />
-              ),
-            }}
-          >
-            {(props) => (
-              <DailyLogScreen
-                {...props}
-                initialDate={targetLogDate}
-                dailyLogs={dailyLogs}
-                onSaveLog={handleSaveDailyLog}
-                onLockApp={handleLockApp}
-                onEnterStealth={handleEnterStealth}
-                isDark={isDark}
-              />
-            )}
-          </Tab.Screen>
+            <Tab.Screen
+              name="Journal"
+              options={{
+                tabBarLabel: 'Journal',
+                tabBarIcon: ({ color, size }) => (
+                  <Ionicons name="journal-outline" size={size || 22} color={color} />
+                ),
+              }}
+            >
+              {(props) => (
+                <DailyLogScreen
+                  {...props}
+                  initialDate={targetLogDate}
+                  dailyLogs={dailyLogs}
+                  onSaveLog={handleSaveDailyLog}
+                  onLockApp={handleLockApp}
+                  onEnterStealth={handleEnterStealth}
+                  isDark={isDark}
+                />
+              )}
+            </Tab.Screen>
 
-          <Tab.Screen
-            name="Tendances"
-            options={{
-              tabBarLabel: 'Historique',
-              tabBarIcon: ({ color, size }) => (
-                <Ionicons name="analytics-outline" size={size || 22} color={color} />
-              ),
-            }}
-          >
-            {(props) => (
-              <HistoryChartScreen
-                {...props}
-                cycles={cycles}
-                dailyLogs={dailyLogs}
-                onLockApp={handleLockApp}
-                onEnterStealth={handleEnterStealth}
-                isDark={isDark}
-              />
-            )}
-          </Tab.Screen>
+            <Tab.Screen
+              name="Tendances"
+              options={{
+                tabBarLabel: 'Historique',
+                tabBarIcon: ({ color, size }) => (
+                  <Ionicons name="analytics-outline" size={size || 22} color={color} />
+                ),
+              }}
+            >
+              {(props) => (
+                <HistoryChartScreen
+                  {...props}
+                  cycles={cycles}
+                  dailyLogs={dailyLogs}
+                  onLockApp={handleLockApp}
+                  onEnterStealth={handleEnterStealth}
+                  isDark={isDark}
+                />
+              )}
+            </Tab.Screen>
 
-          <Tab.Screen
-            name="Paramètres"
-            options={{
-              tabBarLabel: 'Sécurité',
-              tabBarIcon: ({ color, size }) => (
-                <Ionicons name="shield-checkmark-outline" size={size || 22} color={color} />
-              ),
-            }}
-          >
-            {(props) => (
-              <SettingsScreen
-                {...props}
-                profile={profile}
-                cycles={cycles}
-                dailyLogs={dailyLogs}
-                onUpdateProfile={handleUpdateProfile}
-                onResetData={handleResetData}
-                onLockApp={handleLockApp}
-                onEnterStealth={handleEnterStealth}
-                isDark={isDark}
-              />
-            )}
-          </Tab.Screen>
-        </Tab.Navigator>
-      </NavigationContainer>
-    </SafeAreaView>
+            <Tab.Screen
+              name="Paramètres"
+              options={{
+                tabBarLabel: 'Sécurité',
+                tabBarIcon: ({ color, size }) => (
+                  <Ionicons name="shield-checkmark-outline" size={size || 22} color={color} />
+                ),
+              }}
+            >
+              {(props) => (
+                <SettingsScreen
+                  {...props}
+                  profile={profile}
+                  cycles={cycles}
+                  dailyLogs={dailyLogs}
+                  onUpdateProfile={handleUpdateProfile}
+                  onResetData={handleResetData}
+                  onLockApp={handleLockApp}
+                  onEnterStealth={handleEnterStealth}
+                  isDark={isDark}
+                />
+              )}
+            </Tab.Screen>
+          </Tab.Navigator>
+        </NavigationContainer>
+      </SafeAreaView>
+    </GestureHandlerRootView>
   );
 }
 
